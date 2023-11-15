@@ -1,5 +1,7 @@
 import { lazy, Suspense } from "react";
-import { Outlet, BrowserRouter as Router, useRoutes } from "react-router-dom";
+import { BrowserRouter as Router, useRoutes } from "react-router-dom";
+import { ThemeProvider } from "styled-components";
+import { theme } from "./styles/theme";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 import MainLayout from "@components/layouts/MainLayout";
 
@@ -33,13 +35,20 @@ const Routes = () => {
           path: ":id",
           element: (
             <Suspense fallback={<LoadingSpinner />}>
-              <PostDetailView />
+              <PostDetailView mode="view" />
+            </Suspense>
+          ),
+        },
+        {
+          path: ":id/edit",
+          element: (
+            <Suspense fallback={<LoadingSpinner />}>
+              <PostDetailView mode="edit" />
             </Suspense>
           ),
         },
       ],
     },
-    // otras rutas aquí
   ]);
 
   return <MainLayout>{routes}</MainLayout>;
@@ -48,7 +57,9 @@ const Routes = () => {
 function App() {
   return (
     <Router>
-      <Routes />
+      <ThemeProvider theme={theme}>
+        <Routes />
+      </ThemeProvider>
     </Router>
   );
 }

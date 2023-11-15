@@ -1,19 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import {
-  Table as MuiTable,
   TableBody,
-  TableCell,
   TableContainer,
   TableHead,
   TableRow,
   Paper,
-  TablePagination,
-  Typography,
+  IconButton,
 } from "@mui/material";
+
 import useTable from "./useTable";
 import { TableProps } from "src/domain/types";
-import { isPrime } from "@utils/isPrime";
 import { Post } from "@features/posts/domain/types";
+import {
+  Actions,
+  StyledTable,
+  StyledTablePagination,
+  StyledTableCell,
+  StyledText,
+  StyledVisibilityIcon,
+  StyledEditNote,
+} from "./Table.styles";
 
 const Table: React.FC<TableProps> = ({
   data,
@@ -28,47 +34,60 @@ const Table: React.FC<TableProps> = ({
   const navigate = useNavigate();
 
   const getTitleCol = (row: Post) => (
-    <Typography
-      variant="body1"
-      sx={{ fontStyle: `${isPrime(row.id) ? "italic" : "normal"}` }}
-    >
+    <StyledText variant="body1" id={row.id}>
       {row.title}
-    </Typography>
+    </StyledText>
   );
 
   return (
-    <TableContainer component={Paper}>
-      <MuiTable>
+    <TableContainer component={Paper} style={{ maxHeight: 600 }}>
+      <StyledTable stickyHeader>
         <TableHead>
           <TableRow>
             {columns.map((col) => (
-              <TableCell key={col}>{col}</TableCell>
+              <StyledTableCell key={col}>{col}</StyledTableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
           {pageData.map((row) => (
-            <TableRow
-              key={row.id as number}
-              onClick={() => navigate(`/posts/${row.id}`)}
-            >
+            <TableRow key={row.id as number}>
               {columns.map((col) => (
-                <TableCell key={col}>
+                <StyledTableCell key={col}>
                   {col === "title" ? (
                     getTitleCol(row as unknown as Post)
+                  ) : col === "actions" ? (
+                    <Actions>
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/posts/${row.id}`);
+                        }}
+                      >
+                        <StyledVisibilityIcon />
+                      </IconButton>
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/posts/${row.id}/edit`);
+                        }}
+                      >
+                        <StyledEditNote />
+                      </IconButton>
+                    </Actions>
                   ) : (
-                    <Typography variant="body1">
+                    <StyledText variant="body1">
                       {row[col] as string}
-                    </Typography>
+                    </StyledText>
                   )}
-                </TableCell>
+                </StyledTableCell>
               ))}
             </TableRow>
           ))}
         </TableBody>
-      </MuiTable>
+      </StyledTable>
 
-      <TablePagination
+      <StyledTablePagination
         count={data.length}
         component="div"
         page={currentPage}

@@ -28,6 +28,7 @@ const useTable = ({
     const endIndex = startIndex + rowsPerPage;
     setPageData(data.slice(startIndex, endIndex));
   }, [data, currentPage, rowsPerPage]);
+
   return {
     state: { rowsPerPage, pageData },
     actions: {
